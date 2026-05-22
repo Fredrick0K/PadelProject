@@ -23,7 +23,7 @@ public class ConsoleApp {
     // ---------------------------------------------------------------
 
     private static String jwtToken = null;
-    private static final String BASE_URL = "http://localhost:8081/api/";
+    private static final String BASE_URL = "http://localhost:8080/api/";
     private static final RestTemplate restTemplate = new RestTemplate();
     private static final Scanner scanner = new Scanner(System.in);
 
@@ -120,7 +120,8 @@ public class ConsoleApp {
                     BASE_URL + "auth/login",
                     HttpMethod.POST,
                     new HttpEntity<>(loginRequest),
-                    new ParameterizedTypeReference<Map<String, Object>>() {});
+                    new ParameterizedTypeReference<Map<String, Object>>() {
+                    });
 
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 jwtToken = (String) response.getBody().get("token");
@@ -294,16 +295,20 @@ public class ConsoleApp {
 
                     ResponseEntity<Map<String, Object>> res = restTemplate.exchange(
                             BASE_URL + "pistas/" + id + "/detalle", HttpMethod.GET, getAuthRequest(),
-                            new ParameterizedTypeReference<Map<String, Object>>() {});
-                    
+                            new ParameterizedTypeReference<Map<String, Object>>() {
+                            });
+
                     Map<String, Object> p = res.getBody();
-                    System.out.printf("[%d] %s - %s%n", (Integer) p.get("id"), (String) p.get("nombre"), (String) p.get("estado"));
-                    
-                    java.util.List<java.util.Map<String, Object>> reservas = (List<Map<String, Object>>) p.get("reservasActivas");
+                    System.out.printf("[%d] %s - %s%n", (Integer) p.get("id"), (String) p.get("nombre"),
+                            (String) p.get("estado"));
+
+                    java.util.List<java.util.Map<String, Object>> reservas = (List<Map<String, Object>>) p
+                            .get("reservasActivas");
                     if (reservas != null && !reservas.isEmpty()) {
                         System.out.println("  Horas Ocupadas:");
                         for (java.util.Map<String, Object> rActiva : reservas) {
-                            System.out.println("   - " + rActiva.get("horaInicio") + " a " + rActiva.get("horaFin") + " (por " + rActiva.get("nombreUsuario") + ")");
+                            System.out.println("   - " + rActiva.get("horaInicio") + " a " + rActiva.get("horaFin")
+                                    + " (por " + rActiva.get("nombreUsuario") + ")");
                         }
                     } else {
                         System.out.println("  No hay horas ocupadas.");
@@ -370,7 +375,8 @@ public class ConsoleApp {
                     ResponseEntity<Map<String, Object>> dispRes = restTemplate.exchange(
                             BASE_URL + "pistas/" + id + "/disponibilidad?fecha=" + fechaInput,
                             HttpMethod.GET, getAuthRequest(),
-                            new ParameterizedTypeReference<Map<String, Object>>() {});
+                            new ParameterizedTypeReference<Map<String, Object>>() {
+                            });
                     Map<String, Object> disp = dispRes.getBody();
                     if (disp != null) {
                         System.out.println("\n--- DISPONIBILIDAD ---");
@@ -380,7 +386,8 @@ public class ConsoleApp {
                         if (ocupadas != null && !ocupadas.isEmpty()) {
                             System.out.println("Horas OCUPADAS:");
                             for (Map<String, Object> rActiva : ocupadas) {
-                                System.out.println("  - " + rActiva.get("horaInicio") + " a " + rActiva.get("horaFin") + " (por " + rActiva.get("nombreUsuario") + ")");
+                                System.out.println("  - " + rActiva.get("horaInicio") + " a " + rActiva.get("horaFin")
+                                        + " (por " + rActiva.get("nombreUsuario") + ")");
                             }
                         } else {
                             System.out.println("No hay horas ocupadas en esta fecha.");
@@ -398,6 +405,11 @@ public class ConsoleApp {
                         System.out.println("------------------------\n");
                     }
                 }
+
+            } catch (HttpStatusCodeException e) {
+
+                System.out.println(
+                        "Error del servidor (" + e.getStatusCode().value() + "): " + e.getResponseBodyAsString());
 
             } catch (Exception e) {
                 System.out.println("Operación fallida.");
@@ -474,7 +486,8 @@ public class ConsoleApp {
                         ResponseEntity<Map<String, Object>> dispRes = restTemplate.exchange(
                                 BASE_URL + "pistas/" + pid + "/disponibilidad?fecha=" + fechaFinal,
                                 HttpMethod.GET, getAuthRequest(),
-                                new ParameterizedTypeReference<Map<String, Object>>() {});
+                                new ParameterizedTypeReference<Map<String, Object>>() {
+                                });
                         Map<String, Object> disp = dispRes.getBody();
                         if (disp != null) {
                             System.out.println("\n--- DISPONIBILIDAD DE LA PISTA ---");
@@ -484,7 +497,8 @@ public class ConsoleApp {
                             if (ocupadas != null && !ocupadas.isEmpty()) {
                                 System.out.println("Horas OCUPADAS:");
                                 for (Map<String, Object> rActiva : ocupadas) {
-                                    System.out.println("  - " + rActiva.get("horaInicio") + " a " + rActiva.get("horaFin") + " (por " + rActiva.get("nombreUsuario") + ")");
+                                    System.out.println("  - " + rActiva.get("horaInicio") + " a "
+                                            + rActiva.get("horaFin") + " (por " + rActiva.get("nombreUsuario") + ")");
                                 }
                             } else {
                                 System.out.println("No hay horas ocupadas en esta fecha.");
@@ -554,13 +568,14 @@ public class ConsoleApp {
                     System.out.println("Reserva borrada.");
                 }
 
-            } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            } catch (HttpStatusCodeException e) {
                 if (e.getStatusCode().value() == 409) {
                     System.out.println("Error: La pista ya está reservada en ese horario.");
                 } else if (e.getStatusCode().value() == 403) {
                     System.out.println("Error: No tienes permiso. Asegúrate de haber iniciado sesión.");
                 } else {
-                    System.out.println("Error del servidor (" + e.getStatusCode().value() + "): " + e.getResponseBodyAsString());
+                    System.out.println(
+                            "Error del servidor (" + e.getStatusCode().value() + "): " + e.getResponseBodyAsString());
                 }
             } catch (Exception e) {
                 System.out.println("Operación fallida.");
