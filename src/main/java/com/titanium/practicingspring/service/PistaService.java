@@ -34,7 +34,8 @@ public class PistaService {
     public Pista findById(int id) {
         // Si no existe, lanzamos 404 en vez de devolver null
         return pistaRepo.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pista no encontrada con id: " + id));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pista no encontrada con id: " + id));
     }
 
     public List<Pista> findActivas() {
@@ -74,8 +75,7 @@ public class PistaService {
                         r.getUsuario() != null ? r.getUsuario().getNombre() : "Desconocido",
                         r.getHoraInicio(),
                         r.getHoraFin(),
-                        r.getEstado()
-                ))
+                        r.getEstado()))
                 .collect(Collectors.toList());
 
         // Calcular horas libres para hoy (ejemplo: 08:00 a 23:00)
@@ -84,9 +84,8 @@ public class PistaService {
             LocalDateTime inicioSlot = hoy.atTime(i, 0);
             LocalDateTime finSlot = hoy.atTime(i + 1, 0);
 
-            boolean ocupado = activas.stream().anyMatch(r -> 
-                (inicioSlot.isBefore(r.getHoraFin()) && finSlot.isAfter(r.getHoraInicio()))
-            );
+            boolean ocupado = activas.stream()
+                    .anyMatch(r -> (inicioSlot.isBefore(r.getHoraFin()) && finSlot.isAfter(r.getHoraInicio())));
 
             if (!ocupado) {
                 horasLibresHoy.add(String.format("%02d:00 - %02d:00", i, i + 1));
@@ -98,10 +97,9 @@ public class PistaService {
                 pista.getNombre(),
                 pista.getEstado(),
                 pista.getPrecioHora(),
-                pista.getNumeroPistas(),
+                pista.getNumeroPista(),
                 activas,
-                horasLibresHoy
-        );
+                horasLibresHoy);
     }
 
     public DisponibilidadDTO getDisponibilidad(int pistaId, LocalDate fecha) {
@@ -116,8 +114,7 @@ public class PistaService {
                         r.getUsuario() != null ? r.getUsuario().getNombre() : "Desconocido",
                         r.getHoraInicio(),
                         r.getHoraFin(),
-                        r.getEstado()
-                ))
+                        r.getEstado()))
                 .collect(Collectors.toList());
 
         List<String> horasLibres = new java.util.ArrayList<>();
@@ -125,9 +122,8 @@ public class PistaService {
             LocalDateTime inicioSlot = fecha.atTime(i, 0);
             LocalDateTime finSlot = fecha.atTime(i + 1, 0);
 
-            boolean ocupado = ocupadas.stream().anyMatch(r ->
-                (inicioSlot.isBefore(r.getHoraFin()) && finSlot.isAfter(r.getHoraInicio()))
-            );
+            boolean ocupado = ocupadas.stream()
+                    .anyMatch(r -> (inicioSlot.isBefore(r.getHoraFin()) && finSlot.isAfter(r.getHoraInicio())));
 
             if (!ocupado) {
                 horasLibres.add(String.format("%02d:00 - %02d:00", i, i + 1));
@@ -139,7 +135,6 @@ public class PistaService {
                 pista.getNombre(),
                 fecha,
                 ocupadas,
-                horasLibres
-        );
+                horasLibres);
     }
 }
