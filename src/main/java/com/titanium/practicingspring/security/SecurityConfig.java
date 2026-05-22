@@ -8,7 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -26,17 +27,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Desactivamos CSRF porque vamos a usar Tokens (JWT) y no necesitamos protección de formularios web
+                // Desactivamos CSRF porque vamos a usar Tokens (JWT) y no necesitamos
+                // protección de formularios web
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        // Permitimos a cualquiera intentar iniciar sesión o ver la documentación de Swagger
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/pistas", "/error").permitAll()
+                        // Permitimos a cualquiera intentar iniciar sesión o ver la documentación de
+                        // Swagger
+                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/api/pistas", "/error")
+                        .permitAll()
                         // Para cualquier otra ruta, pedimos estar autenticado
-                        .anyRequest().authenticated()
-                )
-                // Indicamos que nuestra API es "Stateless" (no guarda sesiones). Todo va por el token.
+                        .anyRequest().authenticated())
+                // Indicamos que nuestra API es "Stateless" (no guarda sesiones). Todo va por el
+                // token.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Añadimos nuestro filtro personalizado antes del filtro de usuario/contraseña habitual
+                // Añadimos nuestro filtro personalizado antes del filtro de usuario/contraseña
+                // habitual
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -44,13 +49,14 @@ public class SecurityConfig {
 
     // Le dice a Spring Security cómo tiene que autenticar a los usuarios
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // Usamos esto porque de momento las contraseñas están en texto plano en la BBDD 
+    // Usamos esto porque de momento las contraseñas están en texto plano en la BBDD
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 }

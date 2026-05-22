@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.titanium.practicingspring.model.Usuario;
 import com.titanium.practicingspring.security.JwtUtil;
 import com.titanium.practicingspring.service.UsuarioService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,19 +26,21 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final UsuarioService usuarioService;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthController(
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
             JwtUtil jwtUtil,
-            UsuarioService usuarioService) {
+            UsuarioService usuarioService,
+            PasswordEncoder passwordEncoder) {
 
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.usuarioService = usuarioService;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
     // ---------------------------------------------------------------
     // CLASES INTERNAS DE PETICIÓN / RESPUESTA
@@ -48,23 +51,39 @@ public class AuthController {
         private String email;
         private String password;
 
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
+        public String getEmail() {
+            return email;
+        }
 
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 
     public static class AuthResponse {
 
         private String token;
 
-        public AuthResponse(String token) { this.token = token; }
+        public AuthResponse(String token) {
+            this.token = token;
+        }
 
-        public String getToken() { return token; }
-        public void setToken(String token) { this.token = token; }
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
     }
-
 
     // ---------------------------------------------------------------
     // ENDPOINTS
@@ -77,8 +96,7 @@ public class AuthController {
         try {
             // El AuthenticationManager verifica si el email y contraseña coinciden
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.email, authRequest.password)
-            );
+                    new UsernamePasswordAuthenticationToken(authRequest.email, authRequest.password));
         } catch (DisabledException e) {
             // Si el usuario está deshabilitado, devolvemos 403 FORBIDDEN
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuario deshabilitado", e);
@@ -99,7 +117,10 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Usuario usuario) {
 
         try {
-            // Guardamos el usuario — el service asignará fechaCreacion y activo automáticamente
+            // Encriptamos la contraseña antes de guardarla en la BD
+            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+            // Guardamos el usuario — el service asignará fechaCreacion y activo
+            // automáticamente
             Usuario nuevoUsuario = usuarioService.save(usuario);
             return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
         } catch (Exception e) {
