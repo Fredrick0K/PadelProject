@@ -19,7 +19,7 @@ public class Pista {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name = "numero_pistas")
     private int numeroPista;
