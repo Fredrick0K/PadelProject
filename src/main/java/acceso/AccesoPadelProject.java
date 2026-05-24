@@ -23,7 +23,7 @@ import java.util.Map;
 public class AccesoPadelProject {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    private final String BASE_URL = "http://localhost:8080/api";
+    private final String BASE_URL = "http://localhost:8081/api";
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     private static String token = "";
