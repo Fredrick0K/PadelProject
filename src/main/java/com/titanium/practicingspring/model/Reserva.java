@@ -29,7 +29,7 @@ public class Reserva {
     private Pista pista;
 
     @Column(name = "hora_inicio")
-    private LocalDateTime horaInicio;
+    private LocalDateTime horaInicio; 
 
     @Column(name = "hora_fin")
     private LocalDateTime horaFin;

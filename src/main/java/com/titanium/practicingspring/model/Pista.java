@@ -21,7 +21,7 @@ public class Pista {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "numero_pistas")
+    @Column(name = "numero_pista")
     private int numeroPista;
 
     private String nombre;
