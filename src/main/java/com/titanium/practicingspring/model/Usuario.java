@@ -29,7 +29,7 @@ public class Usuario {
 
     private String telefono;
 
-    @Column(name = "contraseña")
+    @Column(name = "contrasena")
     private String contrasena;
 
     private String rol;

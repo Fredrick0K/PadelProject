@@ -11,7 +11,7 @@ public class PracticingspringApplication {
 
 	public static void main(String[] args) {
 
-		System.setProperty("spring.profiles.active", MSSQLBD); // Change the contnstant final propertie for the one
+		System.setProperty("spring.profiles.active", POSTGRESDB); // Change the contnstant final propertie for the one
 																	// you're using
 		SpringApplication.run(PracticingspringApplication.class, args);
 

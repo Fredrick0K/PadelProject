@@ -54,7 +54,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // Usamos esto porque de momento las contraseñas están en texto plano en la BBDD
+    // Usamos esto para encri`ptar las contraseñas con BCrypt.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
