@@ -29,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .username(usuario.getEmail())
                 .password(usuario.getContrasena())
                 // Si no tiene rol en la BBDD, le damos el rol "USER" por defecto
-                .roles(usuario.getRol() != null ? usuario.getRol() : "USER")
+                .roles(usuario.getRol() != null ? usuario.getRol() : "CLIENTE")
                 // Si el campo "activo" es false, marcamos la cuenta como deshabilitada (Spring rechazará el login)
                 .disabled(!usuario.isActivo())
                 .build();

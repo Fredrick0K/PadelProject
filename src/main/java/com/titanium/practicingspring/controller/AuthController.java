@@ -117,10 +117,8 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Usuario usuario) {
 
         try {
-            // Encriptamos la contraseña antes de guardarla en la BD
-            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
-            // Guardamos el usuario — el service asignará fechaCreacion y activo
-            // automáticamente
+            // Guardamos el usuario — el service se encarga de encriptar la contraseña,
+            // y de asignar fechaCreacion y activo automáticamente
             Usuario nuevoUsuario = usuarioService.save(usuario);
             return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
         } catch (Exception e) {

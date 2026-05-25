@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +18,9 @@ public class UsuarioService {
     @Autowired
     private IUsuarioRepository usuarioRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public List<Usuario> findAll() {
         return usuarioRepo.findAll();
     }
@@ -28,6 +32,11 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario) {
+        // Si la contraseña viene en texto plano, la encriptamos antes de guardar
+        if (usuario.getContrasena() != null && !usuario.getContrasena().isEmpty()) {
+            usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+        }
+
         if (usuario.getId() == 0 && usuario.getFechaCreacion() == null) {
             usuario.setFechaCreacion(LocalDateTime.now());
             usuario.setActivo(true);
