@@ -14,7 +14,7 @@
 --     nombre VARCHAR(255) NOT NULL,
 --     email VARCHAR(255) NOT NULL,
 --     telefono VARCHAR(50),
---     contraseña VARCHAR(255) NOT NULL, 
+--     contrasena VARCHAR(255) NOT NULL, 
 --     rol VARCHAR(50) NOT NULL,
 --     activo BOOLEAN NOT NULL DEFAULT TRUE,
 --     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -66,7 +66,7 @@
 -- 1. INSERTAR DATOS EN LA TABLA: Usuario
 -- =========================================================================
 -- Insertamos 2 usuarios.
-INSERT INTO Usuario (nombre, email, telefono, contraseña, rol, activo)
+INSERT INTO Usuario (nombre, email, telefono, contrasena, rol, activo)
 VALUES 
 ('Mohammad', 'mohammad@email.com', '+34600111222', 'clave123', 'CLIENTE', TRUE),
 ('Pilar', 'pilar@email.com', '+34600333444', 'admin456', 'ADMIN', TRUE);
