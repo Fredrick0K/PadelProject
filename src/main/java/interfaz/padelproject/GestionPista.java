@@ -6,12 +6,13 @@ package interfaz.padelproject;
 
 import acceso.AccesoPadelProject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 
 /**
  *
- * @author Pilar
+ * @author isard
  */
 public class GestionPista extends javax.swing.JFrame {
 
@@ -22,11 +23,12 @@ public class GestionPista extends javax.swing.JFrame {
      * Creates new form GestionPista
      */
     public GestionPista() {
+        setResizable(false);
         initComponents();
-        jTextField2.setEnabled(false);
     }
 
     public GestionPista(int idPista) {
+        setResizable(false);
         initComponents();
         this.idPista = idPista;
 
@@ -206,7 +208,7 @@ public class GestionPista extends javax.swing.JFrame {
         Map reservaOriginal = accesoTemp.obtenerObjeto("/pistas/" + idPista, Map.class);
         String fechaCreacion = reservaOriginal.get("fechaCreacion").toString();
 
-        java.util.Map<String, Object> pista = new java.util.HashMap<>();
+        Map<String, Object> pista = new HashMap<>();
         pista.put("id", idPista);
         pista.put("fechaCreacion", fechaCreacion);
         pista.put("numeroPista", Integer.parseInt(jTextField4.getText()));
@@ -233,27 +235,7 @@ public class GestionPista extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new GestionPista().setVisible(true));
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInsertarPista;
@@ -273,7 +255,7 @@ public class GestionPista extends javax.swing.JFrame {
 
     private void cargarDatosPista(int id) {
         acceso.AccesoPadelProject acceso = new acceso.AccesoPadelProject();
-        Map pista = acceso.obtenerObjeto("/pistas/" + id, java.util.Map.class);
+        Map pista = acceso.obtenerObjeto("/pistas/" + id, Map.class);
 
         if (pista == null) {
             return;
@@ -283,7 +265,7 @@ public class GestionPista extends javax.swing.JFrame {
         jTextField2.setText(pista.get("id").toString());
 
         // Número de pista
-        jTextField4.setText(pista.get("numeroPistas").toString());
+        jTextField4.setText(pista.get("numeroPista").toString());
 
         // Nombre
         jTextField1.setText(pista.get("nombre").toString());

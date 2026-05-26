@@ -18,29 +18,27 @@ import java.util.Map;
 
 /**
  *
- * @author Pilar
+ * @author isard
  */
 public class AccesoPadelProject {
 
     private final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private final String BASE_URL = "http://localhost:8080/api";
     private final HttpClient httpClient = HttpClient.newHttpClient();
-
+    
     private static String token = "";
     private static int idUsuarioActual = -1;
-
+    
     public static void setToken(String t) {
         token = t;
     }
-
-    public static void setIdUsuario(int id) {
+    public static void setIdUsuario(int id) { 
         idUsuarioActual = id;
     }
-
-    public static int getIdUsuario() {
+    
+    public static int getIdUsuario() { 
         return idUsuarioActual;
     }
-
     public void respuestaServidor(HttpClient httpClient, String endPoint) {
         try {
             HttpRequest peticion = HttpRequest.newBuilder().uri(URI.create(BASE_URL + endPoint)).GET().build();
@@ -82,7 +80,7 @@ public class AccesoPadelProject {
         }
     }
 
-    // Para obtener una lista de objetos
+// Para obtener una lista de objetos
     public <T> List<T> obtenerLista(String endPoint, Class<T> clase) {
         try {
             HttpRequest peticion = HttpRequest.newBuilder()
@@ -122,7 +120,7 @@ public class AccesoPadelProject {
             return false;
         }
     }
-    // POST para crear y modificar
+//POST para crear y modificar
 
     public boolean crear(String endPoint, Object objeto) {
         try {
@@ -151,7 +149,7 @@ public class AccesoPadelProject {
             // El servidor espera "email" y "password" (no "contrasena")
             Map<String, String> credenciales = new HashMap<>();
             credenciales.put("email", email);
-            credenciales.put("password", contrasena);
+            credenciales.put("password", contrasena); 
 
             String json = mapper.writeValueAsString(credenciales);
 
@@ -172,5 +170,26 @@ public class AccesoPadelProject {
             return null;
         }
     }
+    
+    public boolean modificar(String endPoint, Object objeto) {
+    try {
+        String json = mapper.writeValueAsString(objeto);
+        
+        HttpRequest peticion = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + endPoint))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .PUT(HttpRequest.BodyPublishers.ofString(json))
+                .build();
+        
+        HttpResponse<String> respuesta = httpClient.send(peticion, BodyHandlers.ofString());
+        
+        return respuesta.statusCode() == 200 || respuesta.statusCode() == 204;
+        
+    } catch (IOException | InterruptedException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 
 }
