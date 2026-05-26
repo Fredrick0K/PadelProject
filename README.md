@@ -1,5 +1,5 @@
->[!caution]
-> ## ¡Porfavor, lea antes de realizar cualquier acción!
+>[!IMPORTANT]
+> #### Si quiere probar la app en local, lea detenidamente este documento.
 
 <p align="center"><img  width="350" height="150" alt="image" src="https://github.com/user-attachments/assets/e60825bf-683d-45c3-98bc-0d1cea262896"/></p>
 
