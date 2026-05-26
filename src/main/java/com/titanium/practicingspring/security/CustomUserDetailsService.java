@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+// Esta clase es la implementación de UserDetailsService que Spring Security usará para cargar los detalles de un usuario
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -17,20 +18,25 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // Este método es usado por Spring Security internamente cuando intenta autenticar a alguien
+    // Este método es usado por Spring Security internamente cuando intenta
+    // autenticar a alguien
+    // Carga el usuario de la base de datos usando su email y lo mapea a UserDetails
+    // que para que Spring lo entienda.
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         // Buscamos a nuestro usuario en la base de datos usando su email
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + email));
-        
-        // Convertimos nuestro "Usuario" (entidad) al "UserDetails" que entiende Spring Security
+
+        // Convertimos nuestro "Usuario" (entidad) al "UserDetails" que entiende Spring
+        // Security
         return User.builder()
                 .username(usuario.getEmail())
                 .password(usuario.getContrasena())
                 // Si no tiene rol en la BBDD, le damos el rol "USER" por defecto
                 .roles(usuario.getRol() != null ? usuario.getRol() : "CLIENTE")
-                // Si el campo "activo" es false, marcamos la cuenta como deshabilitada (Spring rechazará el login)
+                // Si el campo "activo" es false, marcamos la cuenta como deshabilitada (Spring
+                // rechazará el login)
                 .disabled(!usuario.isActivo())
                 .build();
     }

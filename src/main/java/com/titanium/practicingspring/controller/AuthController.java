@@ -18,16 +18,20 @@ import com.titanium.practicingspring.security.JwtUtil;
 import com.titanium.practicingspring.service.UsuarioService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+//RestController indica que esta clase es un controlador MVC de Spring y manejara peticiones HTTP.
+//RequestMapping("/api/auth") indica que todos los endpoints de esta clase empezaran por /api/auth.
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    // declaramos las dependencias para autenticar, generar token, y registrar usuarios
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
 
+    //Constructor con todas las dependencias inyectadas por Spring
     public AuthController(
             AuthenticationManager authenticationManager,
             UserDetailsService userDetailsService,
@@ -46,6 +50,7 @@ public class AuthController {
     // CLASES INTERNAS DE PETICIÓN / RESPUESTA
     // ---------------------------------------------------------------
 
+    // Esta clase representa la peticion de autenticacion que el cliente envía al endpoint /login
     public static class AuthRequest {
 
         private String email;
@@ -68,6 +73,7 @@ public class AuthController {
         }
     }
 
+    // Esta clase representa la respuesta del servidor al cliente tras auenticarlo y devuelve un token JWT generado
     public static class AuthResponse {
 
         private String token;
@@ -89,7 +95,7 @@ public class AuthController {
     // ENDPOINTS
     // ---------------------------------------------------------------
 
-    // Recibe las credenciales y devuelve un token JWT si son correctas
+    // Permite al usuario logearse en la aplicacion. Recibe las credenciales y devuelve un token JWT si son correctas
     @PostMapping("/login")
     public AuthResponse login(@RequestBody AuthRequest authRequest) throws Exception {
 
@@ -105,7 +111,7 @@ public class AuthController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email o contraseña incorrectos", e);
         }
 
-        // Si llegamos aquí, las credenciales son correctas — generamos el token
+        // Si llega aqui significa que las credenciales son correctas y generamos el token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.email);
         final String jwt = jwtUtil.generateToken(userDetails);
 
@@ -117,11 +123,12 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody Usuario usuario) {
 
         try {
-            // Guardamos el usuario — el service se encarga de encriptar la contraseña,
-            // y de asignar fechaCreacion y activo automáticamente
+            // Guardamos el usuario el service se encarga de encriptar la contraseña,
+            // y de asignar fechaCreacion y ponerlo como usuario activo.
             Usuario nuevoUsuario = usuarioService.save(usuario);
             return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
         } catch (Exception e) {
+            // Si ocurre cualquier error al guardar el usuario, devolvemos 400 BAD REQUEST
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se pudo registrar el usuario", e);
         }
     }

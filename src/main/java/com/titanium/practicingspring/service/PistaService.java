@@ -4,12 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.titanium.practicingspring.model.Pista;
 import com.titanium.practicingspring.model.Reserva;
 import com.titanium.practicingspring.model.DTOs.DisponibilidadDTO;
@@ -17,20 +15,25 @@ import com.titanium.practicingspring.model.DTOs.PistaDetalleDTO;
 import com.titanium.practicingspring.repository.IRepository.IPistaRepository;
 import com.titanium.practicingspring.repository.IRepository.IReservaRepository;
 
+// Esta clase representa la logica de negocio de la entidad Pista. 
+// Aqui es donde se realizan todas las operaciones que se usan en el Controller.
 @Service
 public class PistaService {
 
     @Autowired
     private IPistaRepository pistaRepo;
 
-    // Necesitamos el repo de reservas para consultar los horarios ocupados
+    // Declaramos el repositorio de reserva ya que necesitamos saber las horas
+    // ocupadas
     @Autowired
     private IReservaRepository reservaRepo;
 
+    // Busca todas las pistas
     public List<Pista> findAll() {
         return pistaRepo.findAll();
     }
 
+    // Busca por ID
     public Pista findById(int id) {
         // Si no existe, lanzamos 404 en vez de devolver null
         return pistaRepo.findById(id)
@@ -38,10 +41,14 @@ public class PistaService {
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pista no encontrada con id: " + id));
     }
 
+    // filtro para buscar las pistas Disponibles solo.
     public List<Pista> findActivas() {
         return pistaRepo.findByEstado("DISPONIBLE");
     }
 
+    // Guarda un objeto en la base de datos. El metodo save ya esta implementado por
+    // el repositorio padre JpaRepository entonces solo lo llamamos y evitamos
+    // escribir consultas SQL a mano.
     public Pista save(Pista pista) {
         if (pista.getId() == 0) {
             pista.setFechaCreacion(LocalDateTime.now());
@@ -52,6 +59,7 @@ public class PistaService {
         return pistaRepo.save(pista);
     }
 
+    // Borra una pista por ID
     public void delete(int id) {
         pistaRepo.deleteById(id);
     }
