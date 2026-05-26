@@ -410,6 +410,7 @@ public class ConsoleApp {
 
                 System.out.println(
                         "Error del servidor (" + e.getStatusCode().value() + "): " + e.getResponseBodyAsString());
+                        e.printStackTrace();
 
             } catch (Exception e) {
                 System.out.println("Operación fallida.");

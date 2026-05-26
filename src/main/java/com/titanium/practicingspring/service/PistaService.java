@@ -50,7 +50,7 @@ public class PistaService {
     // el repositorio padre JpaRepository entonces solo lo llamamos y evitamos
     // escribir consultas SQL a mano.
     public Pista save(Pista pista) {
-        if (pista.getId() == 0) {
+        if (pista.getId() == null) {
             pista.setFechaCreacion(LocalDateTime.now());
             if (pista.getEstado() == null) {
                 pista.setEstado("DISPONIBLE");
